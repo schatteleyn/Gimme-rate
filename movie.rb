@@ -2,7 +2,7 @@
 
 require 'Net/http'
 require 'json'
-require 'mmc'
+require 'sparkle'
 
 puts "Your research: "
 name = gets.chomp
@@ -37,4 +37,9 @@ def getFilmography(name)
   end
   filmo = filmo.reverse
   return filmo
+end
+
+def graph(marks)
+  marks = marks.join(',')
+  puts "`spark` #{a}"
 end
