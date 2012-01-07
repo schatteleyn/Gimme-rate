@@ -2,7 +2,8 @@
 
 require 'Net/http'
 require 'json'
-require 'sparkle'
+
+#Have to find a way to detect if spark is installed or not
 
 puts "Your research: "
 name = gets.chomp
