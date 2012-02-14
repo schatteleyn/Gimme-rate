@@ -1,3 +1,4 @@
 Ruby script giving you a graph of the rating of the filmography of an actor in your shell. 
 Using the API of Allocine, Rotten Tomatoes, IMDB, & Spark shell script https://github.com/holman/spark
+I'm currently rewrinting the MetaMetaCritic program by jyli7. Check it out ! https://github.com/jyli7/Meta-metacritic
 More info to come. 
