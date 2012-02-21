@@ -12,6 +12,7 @@ require 'nokogiri'
 
 APIKEY = "hv4pzbs4n46nmv7s9w87nzwu"
 
+def mmc(title)
 # Method for converting fractions to decimals. Used below in "calculate_average" method.
 def frac_to_float(str)
     numerator, denominator = str.split("/").map(&:to_f)
@@ -123,7 +124,6 @@ def rt(id)
     avg_converted_score = ((sum.to_f)/count)
     print "\n"
     printf("Rotten tomatoes: %.2f", "#{avg_converted_score}")
-    print "\n"
     return avg_converted_score
   end 
   
@@ -145,9 +145,6 @@ def imdb(title) #returns the movie that the user selected
   end
 
   movie_found = get_movie(title) #movie_found is a hash that has the basic movie info
-  
-  #Print out basic info (not individual critics reviews)
-  print "IMDB Rating: ", movie_found["Rating"], "\n\n"
   return (movie_found["Rating"].to_f)*10
 end
 
@@ -155,15 +152,12 @@ def metacritic(title)
   #insert metacritic scraping here
   movie = Nokogiri::HTML(open("http://www.metacritic.com/movie/#{title}"))
   rating = movie.at_css(".score_value").text
-  print "Metacritic: ", rating, "\n"
   return rating
 end 
   
 temp = in_theaters  
 
-#Ask user to enter a title
-print "Movie title (search entire Rotten Tomatoes database): "
-title = gets #take in movie title from command line
+#Get the title
 title.chomp!.gsub!(' ', '+') # sub spaces for plus signs
 
 #Find the movie, based on the user's input
@@ -181,6 +175,6 @@ rt_score = rt(id)
 mc_score = metacritic(title_for_mc).to_i
 imdb_score = imdb(title_for_imdb) 
 
-meta_meta_score = (rt_score + mc_score + imdb_score)/3.0
-printf("Meta-metascore: %.2f", meta_meta_score)
-print "\n\n"
+meta_meta_score = "%.2f" % ((rt_score + mc_score + imdb_score)/3.0))
+return meta_meta_score
+end
