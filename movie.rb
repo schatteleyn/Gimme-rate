@@ -7,9 +7,7 @@ require 'mmc.rb'
 if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 
 	puts "Your research: "
-	name = gets.chomp
-	name = name.gsub!(' ', '+').to_s
-	
+	 name = gets.chomp!.gsub!(' ', '+').to_s
 	
 	def getFilmography(name)
 	  query = 'http://api.allocine.fr/rest/v3/search?partner=YW5kcm9pZC12M3M&filter=person&q=#{name}&format=json'
@@ -21,7 +19,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	    puts "Can't find this person"
 	  end 
 	
-	  @filmo = []
+	  filmo = []
 	
 	  query = 'http://api.allocine.fr/rest/v3/filmography&partner=YW5kcm9pZC12M3M&profile=medium&code=#{id}&filter=movie&format=json'
 	  resp = Net::HTTP.get_response(URI.parse(query))
@@ -34,18 +32,26 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	      next
 	    else
 	      title = base_result['originalTitle']
-	      @filmo.push(title)
+	      filmo.push(title)
 	    end
 	  end
-	  @filmo = @filmo.reverse
-	  return @filmo
+	  filmo = filmo.reverse
+	  return filmo
+	end
+
+	filmo = getFilmography(name)
+  marks = []
+
+	filmo.each do |title|
+		note = mmc(title)
+		marks.push
 	end
 	
 	def graph(marks)
 	  marks = marks.join(',')
 	  puts "`spark` #{a}"
 	end
-
+  
 else
   puts "You must install spark"
   Process.exit
