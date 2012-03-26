@@ -5,12 +5,12 @@ require 'json'
 require 'mmc.rb'
 
 if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
+  
+  puts "Your research: "
+	name = gets.chomp.gsub(' ', '+').to_s.downcase
 
-	puts "Your research: "
-	 name = gets.chomp!.gsub!(' ', '+').to_s
-	
 	def getFilmography(name)
-	  query = 'http://api.allocine.fr/rest/v3/search?partner=YW5kcm9pZC12M3M&filter=person&q=#{name}&format=json'
+	  query = "http://api.allocine.fr/rest/v3/search?partner=YW5kcm9pZC12M3M&filter=person&q=#{name}&format=json"
 	  resp = Net::HTTP.get_response(URI.parse(query))
 	  data = resp.body
 	  result = JSON.parse(data)
@@ -21,7 +21,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	
 	  filmo = []
 	
-	  query = 'http://api.allocine.fr/rest/v3/filmography&partner=YW5kcm9pZC12M3M&profile=medium&code=#{id}&filter=movie&format=json'
+	  query = "http://api.allocine.fr/rest/v3/filmography?partner=YW5kcm9pZC12M3M&profile=medium&code=#{id}&filter=movie&format=json"
 	  resp = Net::HTTP.get_response(URI.parse(query))
 	  data = resp.body
 	  result = JSON.parse(data)
@@ -43,16 +43,16 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
   marks = []
 
 	filmo.each do |title|
-		note = mmc(title)
-		marks.push
+	  note = mmc(title)
+	  marks.push
 	end
 	
 	def graph(marks)
 	  marks = marks.join(',')
-	  puts "`spark` #{a}"
+	  puts "`spark` #{marks}"
 	end
   
 else
-  puts "You must install spark"
+  $stderr.puts "You must install spark"
   Process.exit
 end
