@@ -7,7 +7,7 @@ require 'mmc.rb'
 if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
   
   puts "Your research: "
-  name = gets.chomp.gsub(' ', '+').to_s.downcase
+	name = gets.chomp.gsub(' ', '+').to_s.downcase
 
 	def getFilmography(name)
 	  query = "http://api.allocine.fr/rest/v3/search?partner=YW5kcm9pZC12M3M&filter=person&q=#{name}&format=json"
@@ -25,23 +25,23 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	  resp = Net::HTTP.get_response(URI.parse(query))
 	  data = resp.body
 	  result = JSON.parse(data)
-	  base_result = result['person']['participation']['movie']
+	  result['person']['participation'].each do |participation| 
 	  
-	  base_result.each do |base_result|
-	    if base_result['release']['releaseState']['code'] == '3011' || base_resul['release']['releaseState']['code'] == 'nil'
-	      next
-	    else
-	      title = base_result['originalTitle']
-	      filmo.push(title)
-	    end
-	  end
-	  filmo = filmo.reverse
-	  return filmo
-	end
+       if participation['movie']['release']['releaseState']['code'] == 3011 || participation['movie']['release']['releaseState']['code'] == nil
+         next # The error's handling part is still buggy
+       else
+          title = participation['movie']['originalTitle']
+          filmo.push(title)
+       end
+      end
+      filmo = filmo.reverse
+      return filmo
+    end
+  #end
 
 	filmo = getFilmography(name)
-        marks = []
-
+  marks = []
+	
 	filmo.each do |title|
 	  note = mmc(title)
 	  marks.push
