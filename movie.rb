@@ -7,7 +7,7 @@ require 'mmc.rb'
 if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
   
   puts "Your research: "
-	name = gets.chomp.gsub(' ', '+').to_s.downcase
+  name = gets.chomp.gsub(' ', '+').to_s.downcase
 
 	def getFilmography(name)
 	  query = "http://api.allocine.fr/rest/v3/search?partner=YW5kcm9pZC12M3M&filter=person&q=#{name}&format=json"
@@ -28,7 +28,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	  base_result = result['person']['participation']['movie']
 	  
 	  base_result.each do |base_result|
-	    if base_resul['release']['releaseState']['code'] == '3011' || base_resul['release']['releaseState']['code'] == 'nil'
+	    if base_result['release']['releaseState']['code'] == '3011' || base_resul['release']['releaseState']['code'] == 'nil'
 	      next
 	    else
 	      title = base_result['originalTitle']
@@ -40,7 +40,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	end
 
 	filmo = getFilmography(name)
-  marks = []
+        marks = []
 
 	filmo.each do |title|
 	  note = mmc(title)
