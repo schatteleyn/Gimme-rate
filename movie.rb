@@ -14,14 +14,14 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	  resp = Net::HTTP.get_response(URI.parse(query))
 	  data = resp.body
 	  result = JSON.parse(data)
-	  id = result['feed']['person']['code']
-	  if id == nil
+	  result['feed']['person'].each { |person| @id = person['code'] }
+	  if @id == nil
 	    puts "Can't find this person"
 	  end 
 	
 	  filmo = []
 	
-	  query = "http://api.allocine.fr/rest/v3/filmography?partner=YW5kcm9pZC12M3M&profile=medium&code=#{id}&filter=movie&format=json"
+	  query = "http://api.allocine.fr/rest/v3/filmography?partner=YW5kcm9pZC12M3M&profile=medium&code=#{@id}&filter=movie&format=json"
 	  resp = Net::HTTP.get_response(URI.parse(query))
 	  data = resp.body
 	  result = JSON.parse(data)
