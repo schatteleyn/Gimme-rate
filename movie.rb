@@ -25,19 +25,18 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	  resp = Net::HTTP.get_response(URI.parse(query))
 	  data = resp.body
 	  result = JSON.parse(data)
-	  result['person']['participation'].each do |participation| 
-	  
-       if participation['movie']['release']['releaseState']['code'] == 3011 || participation['movie']['release']['releaseState']['code'] == nil
-         next # The error's handling part is still buggy
-       else
-          title = participation['movie']['originalTitle']
-          filmo.push(title)
-       end
+	  result['person']['participation'].each do |participation|        
+      if participation && (m = participation['movie']) && (r = m['release']) && (rs = r['releaseState']) && [nil, 3011].include?( rs['code']) then 
+        next
+      else
+        title = participation['movie']['originalTitle']
+        filmo.push(title)
       end
-      filmo = filmo.reverse
-      return filmo
     end
-  #end
+    
+    filmo = filmo.reverse
+    return filmo
+  end
 
 	filmo = getFilmography(name)
   marks = []
