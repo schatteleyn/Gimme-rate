@@ -26,7 +26,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	  data = resp.body
 	  result = JSON.parse(data)
 	  result['person']['participation'].each do |participation|        
-      if participation && (m = participation['movie']) && (r = m['release']) && (rs = r['releaseState']) && [nil, 3011].include?( rs['code']) then 
+      if participation && (m = participation['movie']) && (r = m['release']) && (rs = r['releaseState']) && [nil, 3011].include?(rs['code']) then 
         next
       else
         title = participation['movie']['originalTitle']
@@ -34,7 +34,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
       end
     end
     
-    filmo = filmo.reverse
+    filmo.reverse!
     return filmo
   end
 
@@ -43,7 +43,7 @@ if ENV["PATH"].split(':').any? {|x| FileTest.executable? "#{x}/spark" }
 	
 	filmo.each do |title|
 	  note = mmc(title)
-	  marks.push
+	  marks.push(note)
 	end
 	
 	def graph(marks)
