@@ -21,143 +21,130 @@ def frac_to_float(str)
 end
 
 def identify_movie(title) 
-  def search(title)  
-    url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=#{APIKEY}&q=#{title}&page_limit=20"
-    buffer = open(url).read
-
-    # convert JSON data into a hash
-    result = JSON.parse(buffer)
-  end
-
-  #Format and produce the search output
-  def search_output(movie_list)
-    count = 0
-    movie_list["movies"].each do |h| 
-      print "#{count}) "
-       if count <10
-         print " " #Ensure that first column is 2 spaces wide
-       end
-      print "Title: #{h["title"]}"
-       if h["title"].length < 70
-         print " "*(70-h["title"].length) #Ensure that first column is 70 spaces wide
-       end
-      print "Year: #{h["year"]}"
-      print "\n"
-      count += 1
+  url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=#{APIKEY}&q=#{title}&page_limit=20"
+  buffer = open(url).read   
+  # convert JSON data into a hash
+  result = JSON.parse(buffer)
+  result['movies'].each do |movie|
+    if movie['title'] == title
+      return movie
     end
   end
+end
 
 def rt(id)
 
-  def get_movie(id)
-    url = "http://api.rottentomatoes.com/api/public/v1.0/movies/#{id}.json?apikey=#{APIKEY}"
-    buffer = open(url).read
-    # convert JSON data into a hash
-    result = JSON.parse(buffer)
-    return result
-  end
+    def get_movie(id)
+        url = "http://api.rottentomatoes.com/api/public/v1.0/movies/#{id}.json?apikey=#{APIKEY}"
+        buffer = open(url).read
+        # convert JSON data into a hash
+        result = JSON.parse(buffer)
+        return result
+    end
 
-  # Pull up reviewers list
+    # Pull up reviewers list
 
-  def get_all_critics(id)
+    def get_all_critics(id)
       url = "http://api.rottentomatoes.com/api/public/v1.0/movies/#{id}/reviews.json?review_type=all&page_limit=30&page=1&country=us&apikey=#{APIKEY}"
       buffer = open(url).read
-    # convert JSON data into a hash
-    result = JSON.parse(buffer)
-    return result
-  end 
-
-  #Converts critic ratings, e.g. "A", "5/5", "78/100", to a 100 point scale
-  def score_convert(n) 
-    score = 0
-    if n.length <= 2 #if the score is in "A", "A+", "C-" form
-      case n[0] #to account for the first letter
-      when "A"
-        score = 95
-      when "B"
-        score = 85
-      when "C"
-        score = 75
-      when "D"
-        score = 65
-      else
-        score = 50
-      end
-  
-      case n[1] #to account for + and -
-      when "+"
-        score += 3
-      when "-"
-        score -=3
-      end
+      # convert JSON data into a hash
+      result = JSON.parse(buffer)
+      return result
     end 
-    if n.include? "/"  #if the score is in X/Y form
-      score = (frac_to_float(n)*100).to_i
-    end
-    score
-  end
 
-  def display_final_stats(movie_critics, score_only)
-    sum = 0
-    count = 0
-    movie_critics["reviews"].each_with_index do |a, index| 
-      if a["original_score"] 
-        unless score_only
-          puts "#{index}) "
-          puts "Critic: #{a["critic"]}"
-          puts "Original Score: #{a["original_score"]}"
-        end 
-
-        converted_score = score_convert(a["original_score"])
-        puts "Converted Score: #{converted_score}" unless score_only
-        sum += converted_score 
+    #Converts critic ratings, e.g. "A", "5/5", "78/100", to a 100 point scale
+    def score_convert(n) 
+        score = 0
+        if n.length <= 2 #if the score is in "A", "A+", "C-" form
+            case n[0] #to account for the first letter
+            when "A"
+            score = 95
+            when "B"
+            score = 85
+            when "C"
+            score = 75
+            when "D"
+            score = 65
+            else
+            score = 50
+            end
         
-        unless score_only
-          puts "Quote: #{a["quote"]}"
-          print "\n"
+            case n[1] #to account for + and -
+            when "+"
+            score += 3
+            when "-"
+            score -=3
+            end
         end 
-        count += 1
-      end
+        if n.include? "/"  #if the score is in X/Y form
+            score = (frac_to_float(n)*100).to_i
+        end
+        score
     end
+
+    def display_final_stats(movie_critics, score_only)
+        sum = 0
+        count = 0
+        movie_critics["reviews"].each_with_index do |a, index| 
+            if a["original_score"] 
+            unless score_only
+                puts "#{index}) "
+                puts "Critic: #{a["critic"]}"
+                puts "Original Score: #{a["original_score"]}"
+            end 
     
-    #Calculates average converted score, for all RT critics
-    avg_converted_score = ((sum.to_f)/count)
-    print "\n"
-    printf("Rotten tomatoes: %.2f", "#{avg_converted_score}")
-    return avg_converted_score
-  end 
-  
-  # RUN FUNCTIONS #
-  movie_found = get_movie(id) #movie_found is a hash that has the basic movie info
-  movie_critics = get_all_critics(id) 
-  show_movie_details_score = display_final_stats(movie_critics, score_only) 
+            converted_score = score_convert(a["original_score"])
+            puts "Converted Score: #{converted_score}" unless score_only
+            sum += converted_score 
+            
+            unless score_only
+                puts "Quote: #{a["quote"]}"
+                print "\n"
+            end 
+            count += 1
+            end
+        end
+        
+        #Calculates average converted score, for all RT critics
+        avg_converted_score = ((sum.to_f)/count)
+        print "\n"
+        printf("Rotten tomatoes: %.2f", "#{avg_converted_score}")
+        return avg_converted_score
+    end 
+    
+    # RUN FUNCTIONS #
+    movie_found = get_movie(id) #movie_found is a hash that has the basic movie info
+    movie_critics = get_all_critics(id) 
+    show_movie_details_score = display_final_stats(movie_critics, score_only) 
 end 
 
 def imdb(title) #returns the movie that the user selected
 
-  def get_movie(title)
+    def get_movie(title)
     url = "http://www.imdbapi.com/?i=&t=#{title}"
     buffer = open(url).read
 
     # convert JSON data into a hash
     result = JSON.parse(buffer)
     return result
-  end
+    end
 
-  movie_found = get_movie(title) #movie_found is a hash that has the basic movie info
-  return (movie_found["Rating"].to_f)*10
+    movie_found = get_movie(title) #movie_found is a hash that has the basic movie info
+    return (movie_found["Rating"].to_f)*10
 end
 
 def metacritic(title)
-  #insert metacritic scraping here
-  movie = Nokogiri::HTML(open("http://www.metacritic.com/movie/#{title}"))
-  rating = movie.at_css(".score_value").text
-  return rating
+    #insert metacritic scraping here
+    movie = Nokogiri::HTML(open("http://www.metacritic.com/movie/#{title}"))
+    rating = movie.at_css(".score_value").text
+    return rating
 end 
-  
-temp = in_theaters  
+    
+#temp = in_theaters  
 
 #Get the title
+puts "Film"
+title = gets
 title.chomp!.gsub!(' ', '+') # sub spaces for plus signs
 
 #Find the movie, based on the user's input
@@ -175,6 +162,6 @@ rt_score = rt(id)
 mc_score = metacritic(title_for_mc).to_i
 imdb_score = imdb(title_for_imdb) 
 
-meta_meta_score = "%.2f" % ((rt_score + mc_score + imdb_score)/3.0))
+meta_meta_score = ("%.2f" % ((rt_score + mc_score + imdb_score)/3.0))
 return meta_meta_score
 end
