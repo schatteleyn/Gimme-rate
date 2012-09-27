@@ -12,7 +12,7 @@ require 'nokogiri'
 
 APIKEY = "hv4pzbs4n46nmv7s9w87nzwu"
 
-#def mmc(title)
+def mmc(title)
 # Method for converting fractions to decimals. Used below in "calculate_average" method.
 def frac_to_float(str)
     numerator, denominator = str.split("/").map(&:to_f)
@@ -107,17 +107,14 @@ end
 
 def imdb(title) #returns the movie that the user selected
 
-    def get_movie(title)
     url = "http://www.imdbapi.com/?i=&t=#{title}"
     buffer = open(url).read
 
     # convert JSON data into a hash
-    result = JSON.parse(buffer)
+    json = JSON.parse(buffer)
+    result = json["imdbRating"].to_f * 10
     return result
-    end
 
-    movie_found = get_movie(title) #movie_found is a hash that has the basic movie info
-    return (movie_found["Rating"].to_f)*10
 end
 
 def metacritic(title)
@@ -145,10 +142,10 @@ title_for_mc = movie[0]["title"].downcase.gsub(" ", "-")
 id = movie[0]["id"]
 
 #Run the 3 main functions for RT, IMDB, and MC
-puts rt_score = rt(id) 
-puts mc_score = metacritic(title_for_mc).to_i
-puts imdb_score = imdb(title_for_imdb) 
+rt_score = rt(id) 
+mc_score = metacritic(title_for_mc).to_i
+imdb_score = imdb(title_for_imdb).to_i 
 
 meta_meta_score = ("%.2f" % ((rt_score + mc_score + imdb_score)/3.0))
-puts meta_meta_score
-#end
+return meta_meta_score
+end
