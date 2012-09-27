@@ -12,7 +12,7 @@ require 'nokogiri'
 
 APIKEY = "hv4pzbs4n46nmv7s9w87nzwu"
 
-def mmc(title)
+#def mmc(title)
 # Method for converting fractions to decimals. Used below in "calculate_average" method.
 def frac_to_float(str)
     numerator, denominator = str.split("/").map(&:to_f)
@@ -82,40 +82,27 @@ def rt(id)
         score
     end
 
-    def display_final_stats(movie_critics, score_only)
+    def display_final_stats(movie_critics)
         sum = 0
         count = 0
         movie_critics["reviews"].each_with_index do |a, index| 
             if a["original_score"] 
-            unless score_only
-                puts "#{index}) "
-                puts "Critic: #{a["critic"]}"
-                puts "Original Score: #{a["original_score"]}"
-            end 
-    
             converted_score = score_convert(a["original_score"])
-            puts "Converted Score: #{converted_score}" unless score_only
             sum += converted_score 
             
-            unless score_only
-                puts "Quote: #{a["quote"]}"
-                print "\n"
-            end 
             count += 1
             end
         end
         
         #Calculates average converted score, for all RT critics
         avg_converted_score = ((sum.to_f)/count)
-        print "\n"
-        printf("Rotten tomatoes: %.2f", "#{avg_converted_score}")
         return avg_converted_score
     end 
     
     # RUN FUNCTIONS #
     movie_found = get_movie(id) #movie_found is a hash that has the basic movie info
     movie_critics = get_all_critics(id) 
-    show_movie_details_score = display_final_stats(movie_critics, score_only) 
+    show_movie_details_score = display_final_stats(movie_critics) 
 end 
 
 def imdb(title) #returns the movie that the user selected
@@ -151,17 +138,17 @@ title.chomp!.gsub!(' ', '+') # sub spaces for plus signs
 movie = identify_movie(title)
 
 #Reformat the title, so IMDB and MC will recognize it
-title_for_imdb = movie["title"].downcase.gsub(" ", "+")
-title_for_mc = movie["title"].downcase.gsub(" ", "-")
+title_for_imdb = movie[0]["title"].downcase.gsub(" ", "+")
+title_for_mc = movie[0]["title"].downcase.gsub(" ", "-")
 
 #Use ID to find the movie in RT
-id = movie["id"]
+id = movie[0]["id"]
 
 #Run the 3 main functions for RT, IMDB, and MC
-rt_score = rt(id) 
-mc_score = metacritic(title_for_mc).to_i
-imdb_score = imdb(title_for_imdb) 
+puts rt_score = rt(id) 
+puts mc_score = metacritic(title_for_mc).to_i
+puts imdb_score = imdb(title_for_imdb) 
 
 meta_meta_score = ("%.2f" % ((rt_score + mc_score + imdb_score)/3.0))
-return meta_meta_score
-end
+puts meta_meta_score
+#end
