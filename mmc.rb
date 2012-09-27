@@ -127,8 +127,6 @@ end
 #temp = in_theaters  
 
 #Get the title
-puts "Film"
-title = gets
 title.chomp!.gsub!(' ', '+') # sub spaces for plus signs
 
 #Find the movie, based on the user's input
