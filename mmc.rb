@@ -11,7 +11,6 @@ require 'nokogiri'
 
 APIKEY = "hv4pzbs4n46nmv7s9w87nzwu"
 
-def mmc(title)
 # Method for converting fractions to decimals. Used below in "calculate_average" method.
   def frac_to_float(str)
       numerator, denominator = str.split("/").map(&:to_f)
@@ -21,11 +20,12 @@ def mmc(title)
 
   def identify_movie(title) 
     url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=#{APIKEY}&q=#{title}&page_limit=20"
-    buffer = open(url).read   
+    stream = open(url)
     # convert JSON data into a hash
-    result = JSON.parse(buffer)
+    result = JSON.parse(stream.read)
     result['movies'].each do |movie|
       if movie['title'] == title
+        stream.close
         return movie
       end
     end
@@ -35,9 +35,10 @@ def mmc(title)
 
       def get_movie(id)
           url = "http://api.rottentomatoes.com/api/public/v1.0/movies/#{id}.json?apikey=#{APIKEY}"
-          buffer = open(url).read
+          stream = open(url)
           # convert JSON data into a hash
-          result = JSON.parse(buffer)
+          result = JSON.parse(stream.read)
+          stream.close
           return result
       end
 
@@ -45,9 +46,10 @@ def mmc(title)
 
       def get_all_critics(id)
         url = "http://api.rottentomatoes.com/api/public/v1.0/movies/#{id}/reviews.json?review_type=all&page_limit=30&page=1&country=us&apikey=#{APIKEY}"
-        buffer = open(url).read
+        stream = open(url)
         # convert JSON data into a hash
-        result = JSON.parse(buffer)
+        result = JSON.parse(stream.read)
+        stream.close
         return result
       end 
 
@@ -107,11 +109,11 @@ def mmc(title)
   def imdb(title) #returns the movie that the user selected
 
       url = "http://www.imdbapi.com/?i=&t=#{title}"
-      buffer = open(url).read
-
+      stream = open(url)
       # convert JSON data into a hash
-      json = JSON.parse(buffer)
+      json = JSON.parse(stream)
       result = json["imdbRating"].to_f * 10
+      stream.close
       return result
 
   end
@@ -125,6 +127,7 @@ def mmc(title)
       
 #temp = in_theaters  
 
+def mmc(title)
 #Get the title
   title = title.chomp.gsub(' ', '+') # sub spaces for plus signs
 
