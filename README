@@ -2,4 +2,5 @@ Ruby script giving you a graph of the rating of the filmography of an actor in y
 Using the API of Allocine, Rotten Tomatoes, IMDB, & statistical by noqqe https://github.com/noqqe/statistical
 I'm using a modified version of the MetaMetaCritic gem by jyli7. Check it out ! https://github.com/jyli7/Meta-metacritic
 
-I have a stackLevelError when calling the mmc function, I have to investigate.
+I have a stackLevelError when calling the mmc function, I have to investigate.  
+https://gist.github.com/3930583
